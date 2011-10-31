@@ -1,0 +1,7 @@
+#exported files for the end user
+eetest/target/**/*
+#java specific
+*.class
+*.zip
+
+
