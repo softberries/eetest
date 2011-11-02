@@ -23,7 +23,7 @@ import org.jboss.logging.Logger;
 import org.jboss.seam.solder.logging.Category;
 
 import pl.cube.eetest.model.Stock;
-import pl.cube.eetest.model.Ticker;
+import pl.cube.eetest.model.SessionFile;
 import au.com.bytecode.opencsv.CSVReader;
 
 @Stateful
@@ -44,18 +44,50 @@ public class StockMgr {
 	
 	private long counter = 0L;
 
-	public long updateStocksCount(){
-		this.updateStocks();
+	public long importStocksCount(){
+		this.importStocks();
 		return this.counter;
 	}
-	public void updateStocks() {
+	public void updateStocks(){
 		log.info("updateStocks");
+		this.counter = 0;
 		try {
-			List<String> tickers = getTickers();
-			Set<Ticker> existingTickers = getExistingTickers();
-			for (String ticker : tickers) {
+			List<String> tickerFiles = getTickerFiles(".prn");
+			Set<SessionFile> existingTickers = getExistingTickers();
+			for (String ticker : tickerFiles) {
+					log.info("Ticker File: " + ticker);
+					if(existingTickers.contains(new SessionFile(ticker))){
+						log.info("ticker file already exists: " + ticker);
+						continue;
+					}
+					List<Stock> stocks = readPRNStock(ticker);
+					System.out.println("Stocks size: " + stocks.size());
+					log.info("persisting data for ticker: " + ticker);
+					for (Stock stock : stocks) {
+						List<Stock> lastStocks = findLastStocks(stock.getTicker(), 14);
+						lastStocks.add(stock);
+						calculateRSI(lastStocks);
+						em.persist(stock);
+					}
+					SessionFile tic = new SessionFile();
+					tic.setName(ticker);
+					em.persist(tic);
+					break;
+					
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("CounteR: " + counter);
+	}
+	public void importStocks() {
+		log.info("importStocks");
+		try {
+			List<String> tickerFiles = getTickerFiles(".mst");
+			Set<SessionFile> existingTickers = getExistingTickers();
+			for (String ticker : tickerFiles) {
 					log.info("Ticker: " + ticker);
-					if(existingTickers.contains(new Ticker(ticker))){
+					if(existingTickers.contains(new SessionFile(ticker))){
 						log.info("ticker already exists: " + ticker);
 						continue;
 					}
@@ -66,7 +98,7 @@ public class StockMgr {
 					for (Stock stock : stocks) {
 						em.persist(stock);
 					}
-					Ticker tic = new Ticker();
+					SessionFile tic = new SessionFile();
 					tic.setName(ticker);
 					em.persist(tic);
 					break;
@@ -78,10 +110,6 @@ public class StockMgr {
 		System.out.println("CounteR: " + counter);
 	}
 
-	private Set<Ticker> getExistingTickers() {
-		Query query = em.createQuery("SELECT t FROM Ticker t");
-	    return new HashSet<Ticker>(query.getResultList());
-	}
 	public void calculateRSI(List<Stock> stocks) {
 		//order by date
 		Collections.sort(stocks);
@@ -108,15 +136,10 @@ public class StockMgr {
 				}else{
 					lastAvgGain = getAverageGain(sublist, lastAvgGain, currentGain);
 					lastAvgLoss = getAvareageLoss(sublist, lastAvgLoss, currentLoss);
-//					System.out.println("suma avg gain: " + lastAvgGain);
-//					System.out.println("suma avg loss: " + lastAvgLoss);
 				}
 				BigDecimal rsi = new BigDecimal(0.00);
 				if(lastAvgLoss.abs().doubleValue() > 0){
 					BigDecimal rs = (lastAvgGain).divide(lastAvgLoss.abs(),RoundingMode.HALF_UP);
-//					System.out.println("suma avg gain: " + lastAvgGain.abs());
-//					System.out.println("suma avg loss: " + lastAvgLoss.abs());
-//					System.out.println("RS: " + rs);
 					rsi = calculateSingleRSI(rs);
 				}
 				System.out.println("RSI: " + rsi);
@@ -135,14 +158,11 @@ public class StockMgr {
 		if(previous == null){
 			for(Stock s : sublist){
 				if(s.getPriceChange().doubleValue() < 0.0){
-//					System.out.println("Loss: " + s.getPriceChange());
 					result = result.add(s.getPriceChange());
 				}
 			}
-//			System.out.println("Loss suma: " + result);
 			return result.divide(new BigDecimal(sublist.size()).setScale(2), RoundingMode.HALF_UP);
 		}else{
-//			System.out.println("prev: " + previous + ", current: " + currentLoss);
 			return ((previous.multiply(new BigDecimal(13.00))).add(currentLoss)).divide(new BigDecimal(14.00), RoundingMode.HALF_UP);
 		}
 	}
@@ -152,18 +172,71 @@ public class StockMgr {
 		if(previous == null){
 			for(Stock s : sublist){
 				if(s.getPriceChange().doubleValue() > 0.00){
-//					System.out.println("Gain: " + s.getPriceChange());
 					result = result.add(s.getPriceChange());
 				}
 			}
-//			System.out.println("Gain suma: " + result);
 			return result.divide(new BigDecimal(sublist.size()).setScale(2), RoundingMode.HALF_UP);
 		}else{
-//			System.out.println("prev: " + previous + ", current: " + currentGain);
 			return ((previous.multiply(new BigDecimal(13.00))).add(currentGain)).divide(new BigDecimal(14.00), RoundingMode.HALF_UP);
 		}
 	}
 
+	public List<Stock> readPRNStock(String ticker) throws Exception{
+		List<Stock> result = new ArrayList<Stock>();
+		CSVReader reader = new CSVReader(new FileReader(BASE_FOLDER + ticker + ".prn"), ',', '\'', 0);
+		String[] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			Stock stock = new Stock();
+			stock.setTicker(nextLine[0]);
+			stock.setStockDate(getDateFromInput(nextLine[1]));
+			stock.setPriceOpen(new BigDecimal(nextLine[2]));
+			stock.setPriceHigh(new BigDecimal(nextLine[3]));
+			stock.setPriceLow(new BigDecimal(nextLine[4]));
+			stock.setPriceClose(new BigDecimal(nextLine[5]));
+			stock.setVol(new BigDecimal(nextLine[6]));
+			BigDecimal lastClose = findLastClose(nextLine[0]);
+			System.out.println("last close: " + lastClose);
+			if (lastClose != null) {
+				stock.setPriceChange(stock.getPriceClose().subtract(lastClose));
+			}else{
+				stock.setPriceChange(new BigDecimal("0.0"));
+			}
+			if(stock.getTicker() == null ||
+					stock.getStockDate() == null ||
+					stock.getPriceOpen() == null ||
+					stock.getPriceHigh() == null || 
+					stock.getPriceLow() == null ||
+					stock.getPriceClose() == null ||
+					stock.getVol() == null ||
+					stock.getPriceChange() == null){
+				throw new Exception("Stock object is invalid" + stock);
+			}
+			System.out.println("adding stock: " + stock);
+			counter++;
+			result.add(stock);
+		}
+		return result;
+	}
+
+	private Set<SessionFile> getExistingTickers() {
+		Query query = em.createQuery("SELECT t FROM SessionFile t");
+	    return new HashSet<SessionFile>(query.getResultList());
+	}
+	private BigDecimal findLastClose(String ticker) {
+		Query query = em.createQuery("SELECT s.priceClose FROM Stock s ORDER BY s.stockDate DESC");
+		query.setMaxResults(1);
+		List<BigDecimal> res = query.getResultList();
+		if(res != null && res.size() > 0){
+			return res.get(0);
+		}
+		return null;
+	}
+	private List<Stock> findLastStocks(String ticker, int size) {
+		Query query = em.createQuery("SELECT s.priceClose FROM Stock s where s.ticker = :tick ORDER BY s.stockDate DESC");
+		query.setParameter("tick", ticker);
+		query.setMaxResults(size);
+		return query.getResultList();
+	}
 	public List<Stock> readHistoricalStock(String ticker) throws Exception {
 		List<Stock> result = new ArrayList<Stock>();
 		CSVReader reader = new CSVReader(new FileReader(BASE_FOLDER + ticker + ".mst"), ',', '\'', 1);
@@ -200,26 +273,18 @@ public class StockMgr {
 		}
 		return result;
 	}
-
-	public List<Stock> readLatestStock(String ticker) {
-		log.debug("Read latest stock: " + ticker);
-		List<Stock> result = new ArrayList<Stock>();
-
-		return result;
-	}
-
 	public Date getDateFromInput(String inputDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		return formatter.parse(inputDate);
 	}
 
-	public List<String> getTickers() {
+	public List<String> getTickerFiles(final String extension) {
 		List<String> res = new ArrayList<String>();
 		File dir = new File(BASE_FOLDER);
 		String[] children = dir.list();
 		for (String str : children) {
-			if (str.contains(".mst")) {
-				String tmp = str.replace(".mst", "");
+			if (str.contains(extension)) {
+				String tmp = str.replace(extension, "");
 				res.add(tmp);
 				System.out.println(tmp);
 			}

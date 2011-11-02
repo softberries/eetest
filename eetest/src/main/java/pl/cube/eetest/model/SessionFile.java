@@ -5,23 +5,25 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
 @Entity
 @XmlRootElement
-public class Ticker implements Serializable{
+@Table( name = "SESSION_FILE")
+public class SessionFile implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1308241897737024536L;
 
-	public Ticker(){
+	public SessionFile(){
 		
 	}
-	public Ticker(String name){
+	public SessionFile(String name){
 		this.name = name;
 	}
 	@Id
@@ -55,7 +57,7 @@ public class Ticker implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Ticker other = (Ticker) obj;
+		SessionFile other = (SessionFile) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

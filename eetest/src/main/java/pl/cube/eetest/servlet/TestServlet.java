@@ -23,7 +23,7 @@ public class TestServlet extends HttpServlet {
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.write("<h2>Hello Servlet One </h2>");
-		long res = stockmgr.updateStocksCount();
+		long res = stockmgr.importStocksCount();
 		out.write("stocks updated..." + res);
 		out.close();
 	}

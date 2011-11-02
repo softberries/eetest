@@ -26,7 +26,7 @@ public class StockMgrTest {
 	public void readHistoricalStockTest() throws Exception{
 		System.out.println("readhistoricalstocks");
 		StockMgr mgr = new StockMgr();
-		List<String> tickers = mgr.getTickers();
+		List<String> tickers = mgr.getTickerFiles(".mst");
 		for(String ticker : tickers){
 			List<Stock> stocks = mgr.readHistoricalStock(ticker);
 			assertNotNull(stocks);
@@ -57,7 +57,7 @@ public class StockMgrTest {
 	@Test
 	public void getTickers(){
 		StockMgr mgr = new StockMgr();
-		List<String> list =  mgr.getTickers();
+		List<String> list =  mgr.getTickerFiles(".mst");
 		assertNotNull(list);
 	}
 	private List<Stock> getTestStocks(StockMgr mgr) throws ParseException {
