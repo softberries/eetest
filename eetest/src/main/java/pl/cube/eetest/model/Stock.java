@@ -36,9 +36,10 @@ public class Stock implements Serializable, Comparable {
 	private BigDecimal vol;
 	
 	
-	//wskazniki obliczne
+	//wskazniki obliczone
 	private BigDecimal priceChange;
 	private BigDecimal rsi;
+	
 	public Long getId() {
 		return id;
 	}
