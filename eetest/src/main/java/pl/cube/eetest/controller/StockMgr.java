@@ -110,6 +110,14 @@ public class StockMgr {
 		System.out.println("CounteR: " + counter);
 	}
 
+	public void calculateSMA(List<Stock> stocks, int timePeriods){
+		if(stocks.size() > timePeriods){
+			
+		}
+	}
+	public void calculateEMA(List<Stock> stocks, int timePeriods){
+		
+	}
 	public void calculateRSI(List<Stock> stocks) {
 		//order by date
 		Collections.sort(stocks);
