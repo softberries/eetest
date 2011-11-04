@@ -22,7 +22,7 @@ public class TestServlet2 extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
-		out.write("<h2>Hello Servlet Update </h2>");
+		out.write("<h2>Hello Servlet Update </h2>");	
 		stockmgr.updateStocks();
 		out.close();
 	}

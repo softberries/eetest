@@ -223,8 +223,9 @@ public class StockMgr {
 	    return new HashSet<SessionFile>(query.getResultList());
 	}
 	private BigDecimal findLastClose(String ticker) {
-		Query query = em.createQuery("SELECT s.priceClose FROM Stock s ORDER BY s.stockDate DESC");
+		Query query = em.createQuery("SELECT s.priceClose FROM Stock s where s.ticker = :tick ORDER BY s.stockDate DESC");
 		query.setMaxResults(1);
+		query.setParameter("tick", ticker);
 		List<BigDecimal> res = query.getResultList();
 		if(res != null && res.size() > 0){
 			return res.get(0);
@@ -232,7 +233,7 @@ public class StockMgr {
 		return null;
 	}
 	private List<Stock> findLastStocks(String ticker, int size) {
-		Query query = em.createQuery("SELECT s.priceClose FROM Stock s where s.ticker = :tick ORDER BY s.stockDate DESC");
+		Query query = em.createQuery("SELECT s FROM Stock s where s.ticker = :tick ORDER BY s.stockDate DESC");
 		query.setParameter("tick", ticker);
 		query.setMaxResults(size);
 		return query.getResultList();
