@@ -111,12 +111,88 @@ public class StockMgr {
 	}
 
 	public void calculateSMA(List<Stock> stocks, int timePeriods){
+		Collections.sort(stocks);
 		if(stocks.size() > timePeriods){
-			
+			for(int i=0;i <stocks.size()-timePeriods;i++){
+				List<Stock> sublist = stocks.subList(i, i+timePeriods);
+				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
+				Stock currentStock = stocks.get(i+timePeriods-1);
+				BigDecimal sma = calculateSingleSma(sublist);
+				currentStock.setSma(sma);
+				System.out.println("SMA: " + sma);
+			}
+		}
+	}
+	private BigDecimal calculateSingleSma(List<Stock> sublist) {
+		BigDecimal result = new BigDecimal("0.0");
+		for(Stock s : sublist){
+			result = result.add(s.getPriceClose());
+		}
+		return result.divide(new BigDecimal(sublist.size()).setScale(2), RoundingMode.HALF_UP);
+	}
+	public void calculateMACDLine(List<Stock> stocks){
+		for(Stock s : stocks){
+			if(s.getEma12() != null && s.getEma26() != null){
+				s.setMacdLine(s.getEma12().subtract(s.getEma26()));
+				System.out.println("MACD Line: " + s.getMacdLine());
+			}
+		}
+	}
+	public void calculateMACDSignalLine(List<Stock> stocks){
+		BigDecimal smoothing = new BigDecimal(2).setScale(4).divide(new BigDecimal(10).setScale(4), RoundingMode.HALF_UP).setScale(4);
+		Collections.sort(stocks);
+		BigDecimal lastEMA = null;
+		if(stocks.size() > 9){
+			for(int i=0;i <stocks.size()-9;i++){
+				List<Stock> sublist = stocks.subList(i, i+9);
+				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
+				Stock currentStock = stocks.get(i+9-1);
+				if(currentStock.getMacdLine() == null){
+					System.out.println("macd line is null");
+					continue;
+				}
+				if(lastEMA == null){
+					lastEMA = calculateSingleSma(sublist);
+				}else{
+					lastEMA = calculateSingleEma(smoothing, currentStock.getMacdLine(), lastEMA).setScale(2, RoundingMode.HALF_UP);
+				}
+				System.out.println("MACD Signal: " + lastEMA);
+				currentStock.setMacdSignalLine(lastEMA);
+				currentStock.setMacdHistogram(currentStock.getMacdLine().subtract(currentStock.getMacdSignalLine()));
+				System.out.println("MACD Histogram: " + currentStock.getMacdHistogram());
+			}
 		}
 	}
 	public void calculateEMA(List<Stock> stocks, int timePeriods){
-		
+		BigDecimal smoothing = new BigDecimal(2).setScale(4).divide(new BigDecimal(timePeriods + 1).setScale(4), RoundingMode.HALF_UP).setScale(4);
+		System.out.println("Smoothing: " + smoothing);
+		Collections.sort(stocks);
+		BigDecimal lastEMA = null;
+		if(stocks.size() > 14){
+			for(int i=0;i <stocks.size()-timePeriods;i++){
+				List<Stock> sublist = stocks.subList(i, i+timePeriods);
+				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
+				Stock currentStock = stocks.get(i+timePeriods-1);
+				if(lastEMA == null){
+					lastEMA = calculateSingleSma(sublist);
+				}else{
+					lastEMA = calculateSingleEma(smoothing, currentStock.getPriceClose(), lastEMA).setScale(2, RoundingMode.HALF_UP);
+				}
+				if(timePeriods == 12){
+					System.out.println("EMA 12: " + lastEMA);
+					currentStock.setEma12(lastEMA);
+				}else if(timePeriods == 26){
+					System.out.println("EMA 26: " + lastEMA);
+					currentStock.setEma26(lastEMA);
+				}else{
+					System.out.println("EMA " + timePeriods + ": " + lastEMA);
+				}
+			}
+		}
+	}
+	private BigDecimal calculateSingleEma(BigDecimal smoothing, BigDecimal priceClose, BigDecimal lastEMA) {
+		System.out.println("Smoothing: " + smoothing + ", priceClose: " + priceClose + ", lastEma: " + lastEMA);
+		return (smoothing.multiply(priceClose.subtract(lastEMA))).add(lastEMA);
 	}
 	public void calculateRSI(List<Stock> stocks) {
 		//order by date
@@ -150,7 +226,7 @@ public class StockMgr {
 					BigDecimal rs = (lastAvgGain).divide(lastAvgLoss.abs(),RoundingMode.HALF_UP);
 					rsi = calculateSingleRSI(rs);
 				}
-				System.out.println("RSI: " + rsi);
+				System.out.println("Close: " + currentStock.getPriceClose() + ", RSI: " + rsi);
 				currentStock.setRsi(rsi);
 			}
 		}

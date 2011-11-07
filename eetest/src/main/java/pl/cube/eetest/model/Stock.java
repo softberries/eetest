@@ -42,6 +42,12 @@ public class Stock implements Serializable, Comparable {
 	//wskazniki obliczone
 	private BigDecimal priceChange;
 	private BigDecimal rsi;
+	private BigDecimal sma;
+	private BigDecimal ema12;
+	private BigDecimal ema26;
+	private BigDecimal macdLine;
+	private BigDecimal macdSignalLine;
+	private BigDecimal macdHistogram;
 	
 	public Long getId() {
 		return id;
@@ -102,6 +108,42 @@ public class Stock implements Serializable, Comparable {
 	}
 	public void setRsi(BigDecimal rsi) {
 		this.rsi = rsi;
+	}
+	public BigDecimal getSma() {
+		return sma;
+	}
+	public void setSma(BigDecimal sma) {
+		this.sma = sma;
+	}
+	public BigDecimal getEma12() {
+		return ema12;
+	}
+	public void setEma12(BigDecimal ema12) {
+		this.ema12 = ema12;
+	}
+	public BigDecimal getEma26() {
+		return ema26;
+	}
+	public void setEma26(BigDecimal ema26) {
+		this.ema26 = ema26;
+	}
+	public BigDecimal getMacdLine() {
+		return macdLine;
+	}
+	public void setMacdLine(BigDecimal macdLine) {
+		this.macdLine = macdLine;
+	}
+	public BigDecimal getMacdSignalLine() {
+		return macdSignalLine;
+	}
+	public void setMacdSignalLine(BigDecimal macdSignalLine) {
+		this.macdSignalLine = macdSignalLine;
+	}
+	public BigDecimal getMacdHistogram() {
+		return macdHistogram;
+	}
+	public void setMacdHistogram(BigDecimal macdHistogram) {
+		this.macdHistogram = macdHistogram;
 	}
 	@Override
 	public int compareTo(Object arg0) {
