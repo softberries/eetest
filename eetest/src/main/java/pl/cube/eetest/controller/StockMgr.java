@@ -67,6 +67,11 @@ public class StockMgr {
 						List<Stock> lastStocks = findLastStocks(stock.getTicker(), 14);
 						lastStocks.add(stock);
 						calculateRSI(lastStocks);
+						calculateSMA(stocks, 12);
+						calculateEMA(stocks, 12);
+						calculateEMA(stocks, 26);
+						calculateMACDLine(stocks);
+						calculateMACDSignalLine(stocks);
 						em.persist(stock);
 					}
 					SessionFile tic = new SessionFile();
@@ -95,6 +100,12 @@ public class StockMgr {
 					System.out.println("Stocks size: " + stocks.size());
 					log.info("persisting data for ticker: " + ticker);
 					calculateRSI(stocks);
+					calculateSMA(stocks, 12);
+					calculateEMA(stocks, 12);
+					calculateEMA(stocks, 26);
+					calculateMACDLine(stocks);
+					calculateMACDSignalLine(stocks);
+					
 					for (Stock stock : stocks) {
 						em.persist(stock);
 					}
@@ -113,7 +124,7 @@ public class StockMgr {
 	public void calculateSMA(List<Stock> stocks, int timePeriods){
 		Collections.sort(stocks);
 		if(stocks.size() > timePeriods){
-			for(int i=0;i <stocks.size()-timePeriods;i++){
+			for(int i=0;i <stocks.size()-(timePeriods -1);i++){
 				List<Stock> sublist = stocks.subList(i, i+timePeriods);
 				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
 				Stock currentStock = stocks.get(i+timePeriods-1);
@@ -143,7 +154,7 @@ public class StockMgr {
 		Collections.sort(stocks);
 		BigDecimal lastEMA = null;
 		if(stocks.size() > 9){
-			for(int i=0;i <stocks.size()-9;i++){
+			for(int i=0;i <stocks.size()-8;i++){
 				List<Stock> sublist = stocks.subList(i, i+9);
 				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
 				Stock currentStock = stocks.get(i+9-1);
@@ -168,8 +179,8 @@ public class StockMgr {
 		System.out.println("Smoothing: " + smoothing);
 		Collections.sort(stocks);
 		BigDecimal lastEMA = null;
-		if(stocks.size() > 14){
-			for(int i=0;i <stocks.size()-timePeriods;i++){
+		if(stocks.size() > timePeriods){
+			for(int i=0;i <stocks.size()-(timePeriods -1);i++){
 				List<Stock> sublist = stocks.subList(i, i+timePeriods);
 				System.out.println("sublist size: " + sublist.size() + ", i: " + i + ", stocks.size(): " + stocks.size());
 				Stock currentStock = stocks.get(i+timePeriods-1);

@@ -1,4 +1,4 @@
-for i in {1..520}
+for i in {1..1300}
 do
 	echo "calling web page.."
 	curl http://localhost:8080/eetest/hello1
