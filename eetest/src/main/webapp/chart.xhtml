@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   template="/WEB-INF/templates/default.xhtml">
+   <ui:define name="content">
+      <script type="text/javascript" src="charts/amcharts/flash/swfobject.js"></script>
+        
+        <!-- chart is placed in this div. if you have more than one chart on a page, give unique id for each div -->
+        <div id="chartdiv"></div>
+        
+        <script type="text/javascript">
+        
+            var params = 
+            {
+                bgcolor:"#FFFFFF"
+            };
+            
+            var flashVars = 
+            {
+                settings_file: "charts/settings.xml",
+            };
+            
+            swfobject.embedSWF("charts/amcharts/flash/amstock.swf", "chartdiv", "90%", "600", "8.0.0", "/resources/charts/amcharts/flash/expressInstall.swf", flashVars, params);
+            
+        </script>
+   </ui:define>
+</ui:composition>

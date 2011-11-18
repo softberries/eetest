@@ -1,29 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:f="http://java.sun.com/jsf/core"
-   xmlns:h="http://java.sun.com/jsf/html"
-   template="/WEB-INF/templates/default.xhtml">
-   <ui:define name="content">
-      <script type="text/javascript" src="charts/amcharts/flash/swfobject.js"></script>
-        
-        <!-- chart is placed in this div. if you have more than one chart on a page, give unique id for each div -->
-        <div id="chartdiv"></div>
-        
-        <script type="text/javascript">
-        
-            var params = 
-            {
-                bgcolor:"#FFFFFF"
-            };
-            
-            var flashVars = 
-            {
-                settings_file: "charts/settings.xml",
-            };
-            
-            swfobject.embedSWF("charts/amcharts/flash/amstock.swf", "chartdiv", "90%", "600", "8.0.0", "/resources/charts/amcharts/flash/expressInstall.swf", flashVars, params);
-            
-        </script>
-   </ui:define>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/default.xhtml">
+	<ui:define name="content">
+		<h:outputText value="#{stockMgr.latestDate}" style="color: green;" />
+		<h:dataTable value="#{stockMgr.recommendedStocks}" var="stock" id="hor-minimalist-a">
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Date</f:facet>
+				<h:outputText value="#{stock.stockDate}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Ticker</f:facet>
+				<h:outputText value="#{stock.ticker}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Price Close</f:facet>
+				<h:outputText value="#{stock.priceClose}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Price Open</f:facet>
+				<h:outputText value="#{stock.priceOpen}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Price Change</f:facet>
+				<h:outputText value="#{stock.priceChange}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Price High</f:facet>
+				<h:outputText value="#{stock.priceHigh}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Price Low</f:facet>
+				<h:outputText value="#{stock.priceLow}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Volume</f:facet>
+				<h:outputText value="#{stock.vol}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">RSI</f:facet>
+				<h:outputText value="#{stock.rsi}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">MACD Line</f:facet>
+				<h:outputText value="#{stock.macdLine}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">MACD Signal</f:facet>
+				<h:outputText value="#{stock.macdSignalLine}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">SMA</f:facet>
+				<h:outputText value="#{stock.sma}"/>
+			</h:column>
+			<h:column headerstyleClass="first">
+				<f:facet name="header">Buy</f:facet>
+				<button id="#{stock.id}">Buy</button>
+			</h:column>
+		</h:dataTable>
+		<div id="chartdiv"></div>
+	</ui:define>
 </ui:composition>
