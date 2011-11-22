@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import pl.cube.eetest.controller.StockMgr;
 
-@WebServlet(asyncSupported = false, name = "HelloServlet1", urlPatterns = {"/hello1"})
+@WebServlet(asyncSupported = false, name = "HelloServlet1", urlPatterns = {"/import"})
 public class TestServlet extends HttpServlet {
 
 	@Inject

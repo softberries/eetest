@@ -57,9 +57,12 @@
 			</h:column>
 			<h:column headerstyleClass="first">
 				<f:facet name="header">Buy</f:facet>
-				<button id="#{stock.id}">Buy</button>
+				<h:form>
+					<h:commandButton action="#{buyStock.showStockProperties(stock)}" value="Buy" id="buy_#{stock.id}"/>
+				</h:form>
 			</h:column>
 		</h:dataTable>
+
 		<div id="chartdiv"></div>
 	</ui:define>
 </ui:composition>

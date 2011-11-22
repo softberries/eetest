@@ -4,16 +4,17 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
+
 import org.jboss.logging.Logger;
 import org.jboss.seam.solder.logging.Category;
+
 import pl.cube.eetest.data.StockDao;
 import pl.cube.eetest.data.StockProducer;
 import pl.cube.eetest.model.Stock;
 
-@Stateful
 @Model
 public class StockMgr {
 

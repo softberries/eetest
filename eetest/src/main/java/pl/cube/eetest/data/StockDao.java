@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import pl.cube.eetest.model.CurrentStock;
 import pl.cube.eetest.model.SessionFile;
 import pl.cube.eetest.model.Stock;
 
@@ -54,5 +55,9 @@ public class StockDao {
 	public Set<SessionFile> getExistingTickers() {
 		Query query = em.createQuery("SELECT t FROM SessionFile t");
 	    return new HashSet<SessionFile>(query.getResultList());
+	}
+	public void buyStock(CurrentStock cstock){
+		em.persist(cstock);
+		em.flush();
 	}
 }
