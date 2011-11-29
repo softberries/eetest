@@ -2,6 +2,7 @@ package pl.cube.eetest.controller;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import javax.ejb.Stateful;
@@ -29,6 +30,7 @@ public class BuyStock implements Serializable{
 	private BigDecimal buyPrice;
 	private BigDecimal stopLoss;
 	private BigDecimal stopGain;
+	private int quantity;
 	
 	@Inject
 	private StockDao stockDao;
@@ -41,7 +43,19 @@ public class BuyStock implements Serializable{
 		log.debug("show stock properties: " + stock);
 		this.stock = stock;
 		this.cStock = new CurrentStock();
+		this.setBuyPrice(stock.getPriceClose());
+		this.setStopGain(calculateStopGain(stock.getPriceClose()));
+		this.setStopLoss(calculateStopLoss(stock.getPriceClose()));
+		this.setQuantity(10);
 		return "buystock";
+	}
+
+	private BigDecimal calculateStopLoss(BigDecimal priceClose) {
+		return priceClose.multiply(new BigDecimal(0.7)).setScale(2, RoundingMode.HALF_UP);
+	}
+
+	private BigDecimal calculateStopGain(BigDecimal priceClose) {
+		return priceClose.multiply(new BigDecimal(1.6)).setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public Stock getStock() {
@@ -56,11 +70,12 @@ public class BuyStock implements Serializable{
 		CurrentStock cstock = new CurrentStock();
 		cstock.setCurrentPrice(s.getPriceClose());
 		cstock.setLastClosePrice(s.getPriceClose());
-		cstock.setStockId(s.getId());
+		cstock.setStock(s);
 		cstock.setOpenTransaction(new Date());
 		cstock.setBuyPrice(this.getBuyPrice());
 		cstock.setStopGain(this.getStopGain());
 		cstock.setStopLoss(this.getStopLoss());
+		cstock.setQuantity(this.getQuantity());
 		stockDao.buyStock(cstock);
 		return "index";
 	}
@@ -96,4 +111,13 @@ public class BuyStock implements Serializable{
 	public void setStopGain(BigDecimal stopGain) {
 		this.stopGain = stopGain;
 	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+	
 }

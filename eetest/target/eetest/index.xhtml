@@ -5,7 +5,76 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/WEB-INF/templates/default.xhtml">
 	<ui:define name="content">
-		<h:outputText value="#{stockMgr.latestDate}" style="color: green;" />
+		<div id="current-stocks">
+		<p>Current Stocks</p>
+		<h:dataTable value="#{stockMgr.currentStocks}" var="currentStock" id="current-stocks-table">
+			<h:column>
+				<f:facet name="header">Ticker</f:facet>
+				<h:outputText value="#{currentStock.stock.ticker}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Start Date</f:facet>
+				<h:outputText value="#{currentStock.openTransaction}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Buy Price</f:facet>
+				<h:outputText value="#{currentStock.buyPrice}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Quantity</f:facet>
+				<h:outputText value="#{currentStock.quantity}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Stop Loss</f:facet>
+				<h:outputText value="#{currentStock.stopLoss}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Stop Gain</f:facet>
+				<h:outputText value="#{currentStock.stopGain}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Last Close Price</f:facet>
+				<h:outputText value="#{currentStock.lastClosePrice}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Gain (from last close)</f:facet>
+				<h:outputText value="#{currentStock.gainFromLastClose}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Finish Transaction</f:facet>
+				<h:form>
+					<h:commandButton action="#{sellStock.showCurrentStock(currentStock)}" value="Sell" id="sell_#{stock.id}"/>
+				</h:form>
+			</h:column>
+		</h:dataTable>
+		</div>
+		<div id="closed-stocks">
+		<p>Closed Stocks (last 30 days)</p>
+		<h:dataTable value="#{stockMgr.closedStocks}" var="closedStock" id="closed-stocks-table">
+			<h:column>
+				<f:facet name="header">Ticker</f:facet>
+				<h:outputText value="#{closedStock.stock.ticker}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Buy Price</f:facet>
+				<h:outputText value="#{closedStock.buyPrice}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Sell Price</f:facet>
+				<h:outputText value="#{closedStock.sellPrice}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Quantity</f:facet>
+				<h:outputText value="#{closedStock.quantity}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Total Gain</f:facet>
+				<h:outputText value="#{closedStock.totalGain}"/>
+			</h:column>
+		</h:dataTable>
+		</div>
+		<div id="recommended-stocks">
+		<p>Recommended Stocks:</p>
 		<h:dataTable value="#{stockMgr.recommendedStocks}" var="stock" id="hor-minimalist-a">
 			<h:column headerstyleClass="first">
 				<f:facet name="header">Date</f:facet>
@@ -62,7 +131,7 @@
 				</h:form>
 			</h:column>
 		</h:dataTable>
-
+		</div>
 		<div id="chartdiv"></div>
 	</ui:define>
 </ui:composition>

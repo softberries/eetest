@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/default.xhtml">
+	<ui:define name="content">
+	<h:form id="buyform_#{buyStock.stock.id}">
+		<p>Selling stock..<h:outputText value="#{sellStock.currentStock}"/></p>
+		<h:outputLabel for="buyTxt_#{sellStock.currentStock.id}" value="Buy Price:" />
+		<h:outputText id="buyTxt_#{sellStock.currentStock.id}" value="#{sellStock.currentStock.buyPrice}" label="Buy Price:"/>
+		<h:outputLabel for="sellTxt_#{sellStock.currentStock.id}" value="Sell Price:" />
+		<h:inputText id="sellTxt_#{sellStock.currentStock.id}" value="#{sellStock.currentStock.sellPrice}" label="Sell Price:"/>
+		<h:commandButton id="sellBtn_#{sellStock.currentStock.id}" action="#{sellStock.sellStock(sellStock.currentStock)}" value="Sell"/>
+	</h:form>
+	</ui:define>
+</ui:composition>

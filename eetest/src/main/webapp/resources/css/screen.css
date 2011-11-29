@@ -39,3 +39,76 @@ body {
 	color: #009;
 	background-color: #CCF;
 }
+
+
+#current-stocks-table
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	border-collapse: collapse;
+	text-align: left;
+	margin-left: 12px;
+	width: 99%;
+}
+#current-stocks-table th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+#current-stocks-table td
+{
+	color: #669;
+	padding: 3px 8px 0px 8px;
+}
+#current-stocks-table tbody tr:hover td
+{
+	color: #009;
+	background-color: #CCF;
+}
+
+#closed-stocks-table
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	border-collapse: collapse;
+	text-align: left;
+	margin-left: 12px;
+	width: 99%;
+}
+#closed-stocks-table th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+#closed-stocks-table td
+{
+	color: #669;
+	padding: 3px 8px 0px 8px;
+}
+#closed-stocks-table tbody tr:hover td
+{
+	color: #009;
+	background-color: #CCF;
+}
+
+#closed-stocks{
+	float: left;
+	width: 50%;
+}
+#current-stocks{
+	float: left;
+	width: 50%;
+}
+#recommended-stocks{
+	float: left;
+	margin-top: 20px;
+	width: 100%;
+}
