@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: Verdana, sans-serif;
     font-size: 0.9em;
+    background-color: #fff;
 }
 #container {
     margin: 0 auto;
@@ -99,16 +100,64 @@ body {
 	background-color: #CCF;
 }
 
-#closed-stocks{
+#top-bar{
+	width: 100%;
+	background-color: #111;
+	border-bottom: 1px solid #FFF;
+	height: 25px;
+}
+#general-info-section{
+	width: 58%;
 	float: left;
-	width: 50%;
+}
+#current-info-section{
+	float: right;
+	width: 40%;
+}
+.infonumber{
+	font-size: 16px;
+	font-family: "trebuchet ms"
+	font-weight: bold;
+	font-size: 34px;
+}
+#closed-stocks{
+	float: right;
+    margin-right: 12px;
+    width: 100%;
+    clear: both;
 }
 #current-stocks{
-	float: left;
-	width: 50%;
+	float: right;
+    margin-right: 12px;
+    width: 100%;
 }
 #recommended-stocks{
 	float: left;
-	margin-top: 20px;
 	width: 100%;
+}
+#budget{
+	float: left;
+    padding-left: 40px;
+    padding-top: 40px;
+}
+#invested{
+	clear: both;
+    float: left;
+    margin-top: 10px;
+    padding-left: 40px;
+}
+#budget-nbr{
+	float: left;
+    padding-left: 30px;
+    padding-top: 40px;
+}
+#invested-nbr{
+	float: left;
+    padding-left: 1px;
+    padding-top: 10px;
+}
+.paragraph-title{
+	color: #00234F;
+	font-weight: bold;
+	padding-left: 12px;
 }

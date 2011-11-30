@@ -11,19 +11,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pl.cube.eetest.controller.StockMgr;
+import pl.cube.eetest.data.StockProducer;
 
 @WebServlet(asyncSupported = false, name = "HelloServlet1", urlPatterns = {"/import"})
 public class TestServlet extends HttpServlet {
 
 	@Inject
-	private StockMgr stockmgr;
+	private StockProducer stockp;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.write("<h2>Hello Servlet One </h2>");
-		stockmgr.importStocks();
+		stockp.importStocks();
 		out.write("stocks imported...");
 		out.close();
 	}

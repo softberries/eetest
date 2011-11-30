@@ -6,25 +6,24 @@
 <h:head>
    <title>Stocks</title>
    <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/gfx/favicon.ico"/>
+   <script type="text/javascript" src="#{request.contextPath}/charts/amcharts/flash/swfobject.js"></script>
+   <!-- following scripts required for JavaScript version. The order is important! -->
+   <script type="text/javascript" src="#{request.contextPath}/charts/amcharts/javascript/amcharts.js"></script>
+   <script type="text/javascript" src="#{request.contextPath}/charts/amcharts/javascript/amfallback.js"></script>
+   <script type="text/javascript" src="#{request.contextPath}/charts/amcharts/javascript/raphael.js"></script>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
    <h:outputStylesheet name="css/screen.css" />
 </h:head>
 <h:body>
+   <div id="top-bar"></div>
    <div id="container">
       <div id="content">
          <ui:insert name="content">
                     [Template content will be inserted here]
-                </ui:insert>
+         </ui:insert>
       </div>
       <div id="footer">
       
-      <!-- 
-         <h:graphicImage value="/resources/gfx/logo.png" alt="Weld logo" />
-         <p>
-            This project was generated from a Maven archetype from
-            JBoss.<br />
-         </p>
-      -->
       </div>
    </div>
 </h:body>

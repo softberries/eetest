@@ -1,5 +1,7 @@
 package pl.cube.eetest.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +37,9 @@ public class StockMgr {
 	private List<CurrentStock> currentStocks;
 	private List<CurrentStock> closedStocks;
 	
+	private String chartData;
+	private String invested;
+	
 	private Date latestDate;
 
 	@PostConstruct
@@ -43,14 +48,32 @@ public class StockMgr {
 		this.recommendedStocks = stockDao.calculateRecommendedStocks(getLatestDate(), 20);
 		this.currentStocks = stockDao.getCurrentStocks();
 		this.closedStocks = stockDao.getClosedStocks(getStartDate());
+		this.invested = calculateInvestedStocks(this.currentStocks);
+		this.chartData = prepareChartData(this.currentStocks);
+	}
+	private String prepareChartData(List<CurrentStock> currentSts) {
+		StringBuilder sb = new StringBuilder();
+		if(currentSts == null || currentSts.size() == 0){
+			return "READY TO INVEST (%);100";
+		}
+		for(CurrentStock cs : currentSts){
+			BigDecimal cost = cs.getBuyPrice().multiply(new BigDecimal(cs.getQuantity())).setScale(2, RoundingMode.HALF_UP);
+			sb.append(cs.getStock().getTicker() + ";" + cost.setScale(2).toString() + "\\n");
+		}
+		return sb.toString();
+	}
+	private String calculateInvestedStocks(List<CurrentStock> currentSts) {
+		BigDecimal sum = new BigDecimal("0.00");
+		for(CurrentStock cs : currentSts){
+			BigDecimal cost = cs.getBuyPrice().multiply(new BigDecimal(cs.getQuantity())).setScale(2, RoundingMode.HALF_UP);
+			sum = sum.add(cost);
+		}
+		return sum.setScale(2).toString();
 	}
 	private Date getStartDate() {
 		DateTime dt = new DateTime();
 		DateTime earlier = dt.minusDays(30);
 		return earlier.toDate();
-	}
-	public void importStocks(){
-		stockProducer.importStocks();
 	}
 	public void updateStocks(){
 		stockProducer.updateStocks();
@@ -79,5 +102,18 @@ public class StockMgr {
 	public void setClosedStocks(List<CurrentStock> closedStocks) {
 		this.closedStocks = closedStocks;
 	}
+	public String getChartData() {
+		return chartData;
+	}
+	public void setChartData(String chartData) {
+		this.chartData = chartData;
+	}
+	public String getInvested() {
+		return invested;
+	}
+	public void setInvested(String invested) {
+		this.invested = invested;
+	}
+	
 	
 }

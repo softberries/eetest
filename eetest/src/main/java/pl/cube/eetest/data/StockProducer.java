@@ -12,23 +12,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Stateful;
-import javax.enterprise.inject.Model;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.seam.solder.logging.Category;
 
+import pl.cube.eetest.controller.IUrls;
 import pl.cube.eetest.model.SessionFile;
 import pl.cube.eetest.model.Stock;
 import au.com.bytecode.opencsv.CSVReader;
 
-@Stateful
-@Model
+@Stateless
 public class StockProducer {
-
-	private static final String BASE_FOLDER = "/home/kris/Desktop/bosbaza/";
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100.00);
 	private static final BigDecimal ONE = new BigDecimal(1.00);
@@ -270,7 +267,7 @@ public class StockProducer {
 
 	public List<Stock> readPRNStock(String ticker) throws Exception{
 		List<Stock> result = new ArrayList<Stock>();
-		CSVReader reader = new CSVReader(new FileReader(BASE_FOLDER + ticker + ".prn"), ',', '\'', 0);
+		CSVReader reader = new CSVReader(new FileReader(IUrls.TEMP_DIRECTORY + ticker + ".prn"), ',', '\'', 0);
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
 			Stock stock = new Stock();
@@ -307,7 +304,7 @@ public class StockProducer {
 	
 	public List<Stock> readHistoricalStock(String ticker) throws Exception {
 		List<Stock> result = new ArrayList<Stock>();
-		CSVReader reader = new CSVReader(new FileReader(BASE_FOLDER + ticker + ".mst"), ',', '\'', 1);
+		CSVReader reader = new CSVReader(new FileReader(IUrls.TEMP_DIRECTORY + ticker + ".mst"), ',', '\'', 1);
 		String[] nextLine;
 		BigDecimal lastClose = null;
 		while ((nextLine = reader.readNext()) != null) {
@@ -347,7 +344,7 @@ public class StockProducer {
 
 	public List<String> getTickerFiles(final String extension) {
 		List<String> res = new ArrayList<String>();
-		File dir = new File(BASE_FOLDER);
+		File dir = new File(IUrls.TEMP_DIRECTORY);
 		String[] children = dir.list();
 		for (String str : children) {
 			if (str.contains(extension)) {

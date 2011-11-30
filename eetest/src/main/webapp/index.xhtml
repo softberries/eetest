@@ -5,8 +5,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/WEB-INF/templates/default.xhtml">
 	<ui:define name="content">
+		<div id="general-info-section">
+		<span id="invested" class="infonumber">Invested:</span><span id="invested-nbr" class="infonumber">#{stockMgr.invested}</span>
+		<div id="chartdiv" style="margin-left: 600px; width:440px; height:330px; background-color:#FFFFFF"></div>
+		</div>
+		<div id="current-info-section">
 		<div id="current-stocks">
-		<p>Current Stocks</p>
+		<p class="paragraph-title">Current Stocks</p>
 		<h:dataTable value="#{stockMgr.currentStocks}" var="currentStock" id="current-stocks-table">
 			<h:column>
 				<f:facet name="header">Ticker</f:facet>
@@ -49,7 +54,7 @@
 		</h:dataTable>
 		</div>
 		<div id="closed-stocks">
-		<p>Closed Stocks (last 30 days)</p>
+		<p class="paragraph-title">Closed Stocks (last 30 days)</p>
 		<h:dataTable value="#{stockMgr.closedStocks}" var="closedStock" id="closed-stocks-table">
 			<h:column>
 				<f:facet name="header">Ticker</f:facet>
@@ -73,8 +78,9 @@
 			</h:column>
 		</h:dataTable>
 		</div>
+		</div>
 		<div id="recommended-stocks">
-		<p>Recommended Stocks:</p>
+		<p class="paragraph-title">Recommended Stocks:</p>
 		<h:dataTable value="#{stockMgr.recommendedStocks}" var="stock" id="hor-minimalist-a">
 			<h:column headerstyleClass="first">
 				<f:facet name="header">Date</f:facet>
@@ -132,6 +138,41 @@
 			</h:column>
 		</h:dataTable>
 		</div>
-		<div id="chartdiv"></div>
+		<f:verbatim>
+		  <script type="text/javascript">
+        
+            var params = 
+            {
+                bgcolor:"#FFFFFF"
+            };
+            
+            var flashVars = 
+            {
+                path: "../../amcharts/flash/",
+                chart_data: "#{stockMgr.chartData}",
+                chart_settings: "<settings><data_type>csv</data_type><legend><enabled>0</enabled></legend><pie><inner_radius>30</inner_radius><height>7</height><angle>10</angle><gradient></gradient></pie><animation><start_time>1</start_time><pull_out_time>1</pull_out_time></animation><data_labels><show>{title}</show><max_width>100</max_width></data_labels></settings>"
+            };
+            
+            window.onload = function()
+            {            
+                // change == to != to test flash version
+                if(AmCharts.recommended() == "js")
+                {
+                    var amFallback = new AmCharts.AmFallback();
+                    // amFallback.settingsFile = flashVars.settings_file;  		// doesn't support multiple settings files or additional_chart_settins as flash does
+                    // amFallback.dataFile = flashVars.data_file;
+                    amFallback.chartSettings = flashVars.chart_settings;
+                    amFallback.chartData = flashVars.chart_data;
+                    amFallback.type = "pie";
+                    amFallback.write("chartdiv");
+                }
+                else
+                {
+                    swfobject.embedSWF("../../amcharts/flash/ampie.swf", "chartdiv", "800", "600", "8.0.0", "../../amcharts/flash/expressInstall.swf", flashVars, params);
+                }
+            }
+        
+        </script>
+		</f:verbatim>
 	</ui:define>
 </ui:composition>

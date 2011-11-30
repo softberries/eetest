@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateful;
-import javax.enterprise.inject.Model;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,8 +16,7 @@ import pl.cube.eetest.model.CurrentStock;
 import pl.cube.eetest.model.SessionFile;
 import pl.cube.eetest.model.Stock;
 
-@Stateful
-@Model
+@Stateless
 public class StockDao {
 
 	@Inject
